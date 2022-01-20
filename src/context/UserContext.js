@@ -1,4 +1,4 @@
-import React, { createContext, useReducer } from 'react'
+import React, { createContext, useEffect, useReducer } from 'react'
 import {
     getAuth,
     createUserWithEmailAndPassword,
@@ -6,30 +6,23 @@ import {
     onAuthStateChanged
 } from "firebase/auth"
 import reducer from './userReducer'
+import { app } from '../config/firebase'
 
 
 
 const UserContext = createContext()
 
-const initialState = {
-    userCurrent: {},
-    user: {},
-    isLogin: false
-}
-
 const UserProvider = ({ children }) => {
+    const initApp = app
     const auth = getAuth()
 
-    const [state, dispatch] = useReducer(reducer, initialState)
 
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            const uid = user.uid
-            console.log(uid);
-        } else {
-            console.log('response failed')
-        }
-    })
+    const initialState = {
+        user: {},
+        isLogin: auth.currentUser ? true : false
+    }
+
+    const [state, dispatch] = useReducer(reducer, initialState)
 
     const userLogin = payload => {
         signInWithEmailAndPassword(auth, payload.email, payload.password)
@@ -37,25 +30,37 @@ const UserProvider = ({ children }) => {
                 dispatch({ type: 'LOGIN', payload: userCredential.user })
             })
             .catch((error) => {
-                const errorCode = error.code
-                const errorMessage = error.message
+                // const errorCode = error.code
+                // const errorMessage = error.message
             })
     }
 
     const userRegister = payload => {
+        console.log('works!');
         createUserWithEmailAndPassword(auth, payload.email, payload.password)
             .then((userCredential) => {
-                dispatch({ type: 'LOGIN', payload: userCredential.user })
+                console.log(userCredential.uid)
             })
             .catch((error) => {
                 const errorCode = error.code
                 const errorMessage = error.message
+                console.log(`error code: ${errorCode}, error message: ${errorMessage}`)
             })
     }
 
     const userLogout = () => { }
 
     const getUser = payload => { }
+
+    useEffect( async () => {
+        await onAuthStateChanged(auth, (user) => {
+            if (user) {
+                dispatch({type: 'SET_USER', payload: user})
+            } else {
+                dispatch({type: 'LOGOUT'})
+            }
+        })
+    }, [])
 
     const userMethods = {
         ...state,
@@ -65,11 +70,11 @@ const UserProvider = ({ children }) => {
     }
 
     return (
-        <UserContext.Provider value={userMethods}>
+        <UserContext.Provider value={{ userMethods }}>
             {children}
         </UserContext.Provider>
     )
 }
 
 export default UserProvider
-module.exports = UserContext
+export { UserContext }

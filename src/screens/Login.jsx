@@ -1,38 +1,47 @@
 import { Button, Container, Grid, TextField, Typography } from '@mui/material'
-import React, { useReducer } from 'react'
+import React, { useContext, useState } from 'react'
+import { Redirect } from 'react-router-dom';
+import { UserContext } from '../context/UserContext';
 
-const initialState = {
-    registerEmail: '',
-    registerPassword: '',
-    registerConfirmPassword: '',
-    registerName: '',
 
-    loginEmail: '',
-    loginPassword: ''
-}
-
-const reducer = (state, action) => {
-    switch (action.type) {
-        case 'ONCHANGE':
-            const newState = state
-            newState[action.payload.name] = action.payload.value
-            return {...newState}
-    
-        default:
-            return state
-    }
-}
 
 const Login = () => {
-    const [state, dispatch] = useReducer(reducer, initialState)
+    const { userRegister, ...state } = useContext(UserContext).userMethods
+    const [textInput, setTextInput] = useState({
+        registerEmail: '',
+        registerPassword: '',
+        registerConfirmPassword: '',
+        registerName: '',
+
+        loginEmail: '',
+        loginPassword: ''
+    })
 
 
     const handleInputChange = e => {
-        dispatch({type: 'ONCHANGE', payload: {name: e.target.name, value: e.target.value}})
+        console.log(`${e.target.name}, ${e.target.value}`);
+        let newState = textInput
+        newState[e.target.name] = e.target.value
+        setTextInput({ ...newState })
     }
+
+    const login = () => { }
+
+    const register = async (e) => {
+        e.preventDefault()
+        const date = { email: textInput.registerEmail, password: textInput.registerPassword }
+        if (textInput.registerPassword === textInput.registerConfirmPassword)
+            userRegister(date)
+        else
+            console.log('password and confirm password is not match')
+    }
+    console.log(state.isLogin)
+    if(state.isLogin)
+        return <Redirect to='/' />
+
     return (
         <Container maxWidth='lg'>
-            <Typography>{JSON.stringify(state)}</Typography>
+            {/* <Typography>{JSON.stringify(textInput)}</Typography> */}
             <Grid container>
                 <Grid item xs={6}>
                     <Grid container rowSpacing={2}>
@@ -87,7 +96,7 @@ const Login = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <Container>
-                                <form>
+                                <form onSubmit={e => register(e)}>
                                     <Grid container rowSpacing={1}>
                                         <Grid item xs={12}>
                                             <TextField
@@ -138,7 +147,11 @@ const Login = () => {
                                             />
                                         </Grid>
                                         <Grid item xs={12}>
-                                            <Button type='submit' variant='contained' fullWidth>Register</Button>
+                                            <Button
+                                                type='submit'
+                                                variant='contained'
+                                                fullWidth
+                                            >Register</Button>
                                         </Grid>
                                     </Grid>
                                 </form>

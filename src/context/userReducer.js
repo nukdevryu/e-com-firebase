@@ -4,9 +4,13 @@ const reducer = (state, action) => {
             return { ...state, user: action.payload }
 
         case 'LOGOUT':
-            return { ...state, user: {} }
+            return { ...state, user: {}, isLogin: false }
+
+        case 'SET_USER':
+            return {...state, user: action.payload, isLogin: true}
 
         default:
             return state
     }
 }
+export default reducer

@@ -3,7 +3,11 @@ import {
     getAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    onAuthStateChanged
+    signOut,
+    onAuthStateChanged,
+    updateProfile,
+    sendEmailVerification,
+    sendPasswordResetEmail
 } from "firebase/auth"
 import reducer from './userReducer'
 import { app } from '../config/firebase'
@@ -30,8 +34,6 @@ const UserProvider = ({ children }) => {
                 dispatch({ type: 'LOGIN', payload: userCredential.user })
             })
             .catch((error) => {
-                // const errorCode = error.code
-                // const errorMessage = error.message
             })
     }
 
@@ -39,7 +41,8 @@ const UserProvider = ({ children }) => {
         console.log('works!');
         createUserWithEmailAndPassword(auth, payload.email, payload.password)
             .then((userCredential) => {
-                console.log(userCredential.uid)
+                sendEmailVerification(auth.currentUser)
+                    .then(() => { })
             })
             .catch((error) => {
                 const errorCode = error.code
@@ -48,16 +51,43 @@ const UserProvider = ({ children }) => {
             })
     }
 
-    const userLogout = () => { }
+    const userLogout = () => {
+        signOut(auth)
+    }
 
-    const getUser = payload => { }
+    const getUser = payload => {
+        if (!payload.emailVerified)
+            window.alert('you arent verify')
+        dispatch({ type: 'SET_USER', payload })
+    }
 
-    useEffect( async () => {
+    const updateUser = payload => {
+        const imgProfile = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnELq88FqJJ3fRj93adsIGYvhO-TiVlgimVQ&usqp=CAU'
+        updateProfile(auth.currentUser, {
+            displayName: "Error Dev",
+            photoURL: imgProfile
+        }).then(() => {
+        }).catch((error) => {
+        })
+    }
+
+    const userForgotPassword = payload => {
+        sendPasswordResetEmail(auth, 'nukdev.ryu@gmail.com')
+            .then(() => {
+            })
+            .catch((error) => {
+                const errorCode = error.code
+                const errorMessage = error.message
+            })
+    }
+
+    useEffect(async () => {
         await onAuthStateChanged(auth, (user) => {
             if (user) {
-                dispatch({type: 'SET_USER', payload: user})
+                getUser(user)
             } else {
-                dispatch({type: 'LOGOUT'})
+                signOut(auth)
+                dispatch({ type: 'LOGOUT' })
             }
         })
     }, [])
@@ -66,7 +96,9 @@ const UserProvider = ({ children }) => {
         ...state,
         userLogin,
         userRegister,
-        userLogout
+        userLogout,
+        updateUser,
+        userForgotPassword
     }
 
     return (

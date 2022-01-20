@@ -1,4 +1,4 @@
-import { Button, Container, Grid, TextField, Typography } from '@mui/material'
+import { Button, Container, Divider, Grid, TextField, Typography } from '@mui/material'
 import React, { useContext, useState } from 'react'
 import { Redirect } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
@@ -6,7 +6,7 @@ import { UserContext } from '../context/UserContext';
 
 
 const Login = () => {
-    const { userRegister, ...state } = useContext(UserContext).userMethods
+    const { userRegister, userLogin, userForgotPassword, ...state } = useContext(UserContext).userMethods
     const [textInput, setTextInput] = useState({
         registerEmail: '',
         registerPassword: '',
@@ -19,23 +19,25 @@ const Login = () => {
 
 
     const handleInputChange = e => {
-        console.log(`${e.target.name}, ${e.target.value}`);
         let newState = textInput
         newState[e.target.name] = e.target.value
         setTextInput({ ...newState })
     }
 
-    const login = () => { }
+    const login = (e) => {
+        e.preventDefault()
+        const data = { email: textInput.loginEmail, password: textInput.loginPassword }
+        userLogin(data)
+    }
 
     const register = async (e) => {
         e.preventDefault()
-        const date = { email: textInput.registerEmail, password: textInput.registerPassword }
+        const data = { email: textInput.registerEmail, password: textInput.registerPassword }
         if (textInput.registerPassword === textInput.registerConfirmPassword)
-            userRegister(date)
+            userRegister(data)
         else
             console.log('password and confirm password is not match')
     }
-    console.log(state.isLogin)
     if(state.isLogin)
         return <Redirect to='/' />
 
@@ -50,7 +52,7 @@ const Login = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <Container>
-                                <form>
+                                <form onSubmit={e => login(e)}>
                                     <Grid container rowSpacing={1}>
                                         <Grid item xs={12}>
                                             <TextField
@@ -82,6 +84,15 @@ const Login = () => {
                                                 type='submit'
                                                 fullWidth
                                             >Login</Button>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Divider />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Button
+                                                variant='contained'
+                                                onClick={() => userForgotPassword()}
+                                            >forgot password</Button>
                                         </Grid>
                                     </Grid>
                                 </form>

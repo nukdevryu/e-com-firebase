@@ -1,12 +1,14 @@
-import { Container, Grid, Paper } from '@mui/material'
-import React from 'react'
+import { Container, Grid, Paper, Typography } from '@mui/material'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { UserContext } from '../context/UserContext'
 
 const Header = () => {
+    const { ...state } = useContext(UserContext).userMethods
     return (
         <Container maxWidth='xl' style={{marginBottom: '5%'}}>
             <Paper>
-            <Grid container>
+            <Grid container justifyContent='space-between'>
                 <Grid item xs={2}>
                     <Link to='/'>Show Products</Link>
                 </Grid>
@@ -19,6 +21,11 @@ const Header = () => {
                 <Grid item xs={2}>
                     <Link to='/login'>Login</Link>
                 </Grid>
+                {
+                state.isLogin && <Grid item xs={2}>
+                    <Typography>{`Name: ${state.user.displayName}`}</Typography>
+                </Grid>
+                }
             </Grid>
         </Paper>
         </Container>

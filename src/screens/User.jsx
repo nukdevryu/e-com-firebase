@@ -21,7 +21,7 @@ const User = () => {
                 variant='contained'
                 color='info'
                 onClick={() => updateUser()}
-            >Logout</Button>
+            >Update User</Button>
         </Container>
     )
 }

@@ -1,0 +1,12 @@
+{
+    "config": {
+        "apiKey": "AIzaSyDOe9OTMc69RhT9Yg4BlhrwIzd2x39tKrQ",
+        "authDomain": "e-commerce-3048f.firebaseapp.com",
+        "projectId": "e-commerce-3048f",
+        "storageBucket": "e-commerce-3048f.appspot.com",
+        "messagingSenderId": "854140229177",
+        "appId": "1:854140229177:web:035f7bfc4bb37960315fe8",
+        "measurementId": "G-W0HX440J52"
+    },
+    "databaseURL": ""
+}

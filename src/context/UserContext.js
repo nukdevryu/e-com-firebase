@@ -10,14 +10,12 @@ import {
     sendPasswordResetEmail
 } from "firebase/auth"
 import reducer from './userReducer'
-import { app } from '../config/firebase'
 
 
 
 const UserContext = createContext()
 
 const UserProvider = ({ children }) => {
-    const initApp = app
     const auth = getAuth()
 
 
@@ -62,12 +60,12 @@ const UserProvider = ({ children }) => {
     }
 
     const updateUser = payload => {
-        const imgProfile = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnELq88FqJJ3fRj93adsIGYvhO-TiVlgimVQ&usqp=CAU'
-        updateProfile(auth.currentUser, {
-            displayName: "Error Dev",
-            photoURL: imgProfile
-        }).then(() => {
+        const photoURL = payload.photoURL ? payload.photoURL : state.user.photoURL
+        const displayName = payload.displayName ? payload.displayName : state.user.displayName
+        updateProfile(auth.currentUser, {displayName,photoURL})
+        .then(() => {
         }).catch((error) => {
+            console.log(error);
         })
     }
 

@@ -1,16 +1,19 @@
 import React from 'react'
 import Header from './components/Header'
+import ProductProvider from './context/ProductContext'
 import UserProvider from './context/UserContext'
 import Public from './routes/Public'
 
 const App = () => {
   return (
     <UserProvider>
-      <div>
-        <Header />
-        {/* Router */}
-        <Public />
-      </div>
+      <ProductProvider>
+        <div>
+          <Header />
+          {/* Router */}
+          <Public />
+        </div>
+      </ProductProvider>
     </UserProvider>
   )
 }

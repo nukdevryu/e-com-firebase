@@ -1,4 +1,4 @@
-import { Container, Grid, Paper, Typography } from '@mui/material'
+import { Avatar, Chip, Container, Grid, Paper, Stack, Typography } from '@mui/material'
 import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { UserContext } from '../context/UserContext'
@@ -10,7 +10,7 @@ const Header = () => {
             <Paper>
                 <Grid container justifyContent='space-between' textAlign='center'>
                     <Grid item xs={3}>
-                        <Link to='/'>Show Products</Link>
+                        <Link to='/'>Products</Link>
                     </Grid>
                     <Grid item xs={3}>
                         <Link to='/user'>User</Link>
@@ -20,12 +20,18 @@ const Header = () => {
                     </Grid>
                     {
                         state.isLogin ?
-                        <Grid item xs={3}>
-                            <Typography>{`Name: ${state.user.displayName}`}</Typography>
-                        </Grid> :
-                        <Grid item xs={3}>
-                            <Link to='/login'>Login</Link>
-                        </Grid>
+                            <Grid item xs={3}>
+                                <Stack direction="row" spacing={1}>
+                                    <Chip
+                                        avatar={<Avatar alt="Natacha" src={state.user.photoURL} />}
+                                        label={state.user.displayName}
+                                        variant="outlined"
+                                    />
+                                </Stack>
+                            </Grid> :
+                            <Grid item xs={3}>
+                                <Link to='/login'>Login</Link>
+                            </Grid>
                     }
                 </Grid>
             </Paper>

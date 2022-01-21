@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from 'react'
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc } from "firebase/firestore"
 import { app } from '../config/firebase'
-import { getStorage, ref, uploadString } from "firebase/storage"
+import { getStorage, listAll, ref, uploadString } from "firebase/storage"
 
 const ProductContext = createContext()
 
@@ -17,11 +17,6 @@ const ProductProvider = ({ children }) => {
                 price: 12,
                 quantity: 1,
                 type: 'ETC'
-            })
-            const storageRef = await ref(storage)
-            const imageData = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcST43mb8k8AEDbQ_DD7jNy-ezpRPN6X1_P7lw&usqp=CAU'
-            uploadString(storageRef, imageData, 'products').then((snapshot) => {
-                console.log('Uploaded a data_url string!');
             })
             console.log("Document written with ID: ", docRef.id)
         } catch (e) {
@@ -55,6 +50,15 @@ const ProductProvider = ({ children }) => {
     useEffect(async () => {
         const querySnapshot = await getDocs(collection(db, "products"))
         setProducts(querySnapshot.docs)
+        const listRef = ref(storage, 'products')
+        listAll(listRef)
+            .then((res) => {
+                res.items.forEach((itemRef) => {
+                    console.log(itemRef)
+                });
+            }).catch((error) => {
+                console.log(error)
+            })
     }, [])
 
 
